@@ -18,3 +18,5 @@ Route::match(['get', 'post'], 'register', function(){
 });
 
 Route::get('/', 'HomeController@index')->name('home');
+
+Route::resource('companies','CompanyController');
