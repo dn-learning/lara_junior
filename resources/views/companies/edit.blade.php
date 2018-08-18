@@ -1,12 +1,12 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="card-header">New Company</div>
+<div class="card-header">Edit Company - {{ $company->name }}</div>
     <div class="card-body">
-        <form action="{{route('companies.store')}}" method="post" enctype="multipart/form-data">
+        <form action="{{route('companies.update',['company'=>$company])}}" method="post">
 
             @include ('layouts.errors')
-
+            @method('PUT')
             @csrf
             
             <div class="form-group row">
@@ -30,12 +30,7 @@
                 </div>
             </div>
 
-            <div class="form-group">
-                <label for="logo">Example file input</label>
-                <input type="file" class="form-control-file" name="logo">
-            </div>
-
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="submit" class="btn btn-primary">Change</button>
         </form>
     </div>
 @endsection

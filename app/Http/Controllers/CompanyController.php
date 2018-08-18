@@ -3,10 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Company;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 class CompanyController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');   
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -14,7 +20,7 @@ class CompanyController extends Controller
      */
     public function index()
     {
-        // $companies = Company::all();
+        $companies = Company::simplePaginate(5);
         return view('companies.index', compact(['companies']) );
     }
 
@@ -36,7 +42,24 @@ class CompanyController extends Controller
      */
     public function store(Request $request)
     {
-        dd($request);
+
+        $this->validate($request, [
+            'name' => 'required',
+            'email' => 'email',
+            'logo' => 'dimensions:min_width=100,min_height=100'
+        ]);
+
+        $company = new Company;
+        $company->name = request('name');
+        $company->email = request('email');
+
+        $path = $request->file('logo')->store('images/logos');
+        
+        $company->logo = $path;
+        $company->website = request('website');
+        $company->save();
+
+        return redirect('companies')->with('status', 'New company added');
     }
 
     /**
@@ -58,7 +81,7 @@ class CompanyController extends Controller
      */
     public function edit(Company $company)
     {
-        //
+        return view('companies/edit', compact('company'));
     }
 
     /**
@@ -70,7 +93,20 @@ class CompanyController extends Controller
      */
     public function update(Request $request, Company $company)
     {
-        //
+        $this->validate($request, [
+            'email' => 'email',
+        ]);
+
+        $company = Company::find($company->id); // important USE ID!!!
+        $company->name = request('name');
+        $company->email = request('email');
+        $company->website = request('website');
+
+        // dd($company);
+
+        $company->save();
+
+        return redirect('/')->with('status', 'Company was changed');
     }
 
     /**
@@ -81,6 +117,8 @@ class CompanyController extends Controller
      */
     public function destroy(Company $company)
     {
-        //
+        $company->destroy($company->id);
+
+        return redirect('/')->with('status', 'Company was deleted');
     }
 }

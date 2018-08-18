@@ -17,6 +17,10 @@ Route::match(['get', 'post'], 'register', function(){
     return redirect('/');
 });
 
-Route::get('/', 'HomeController@index')->name('home');
+Route::get('/', 'CompanyController@index')->name('home');
+
+Route::match(['get', 'post'], 'home', function(){
+    return redirect('/');
+});
 
 Route::resource('companies','CompanyController');
